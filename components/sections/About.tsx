@@ -204,7 +204,7 @@ export function About() {
                 </motion.div>
               ))}
             </motion.div>
-
+// sangar kan
             {/* CTA */}
             <div className="flex flex-wrap gap-3">
               <a
