@@ -81,14 +81,14 @@ export function About() {
           </h2>
         </motion.div>
 
-        <div className="grid gap-14 lg:grid-cols-2 lg:items-start">
+        <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
 
           {/* ── Left: Photo + tags ── */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="flex flex-col items-center gap-6 lg:items-start"
+            className="flex flex-col items-center gap-6 lg:items-center"
           >
             {/* Gradient border photo */}
             <div className="relative mx-auto w-64 sm:w-72 lg:mx-0">

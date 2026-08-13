@@ -45,7 +45,7 @@ export const personalInfo = {
   linkedin: "https://linkedin.com/in/abdulloh-hisyam",
   twitter: "https://twitter.com/abdullohhisyam",
   cvUrl: "/cv.pdf",
-  avatar: "/avatar.jpg",
+  avatar: "/Profil-foto.jpeg",
   location: "Malang, Jawa Timur",
 };
 
