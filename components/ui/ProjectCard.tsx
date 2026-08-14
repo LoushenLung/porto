@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ExternalLink, ArrowRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 import type { Project } from "@/lib/data";
+import { useRef, useState } from "react";
+import { PreviewModal } from "@/components/ui/PreviewModal";
 
 interface ProjectCardProps {
   project: Project;
@@ -14,6 +16,9 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index = 0, featured = false }: ProjectCardProps) {
+  const [openPreview, setOpenPreview] = useState(false);
+  const [videoSrc, setVideoSrc] = useState<string | undefined>(undefined);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -36,9 +41,31 @@ export function ProjectCard({ project, index = 0, featured = false }: ProjectCar
           src={project.image}
           alt={project.title}
           fill
+          loading={featured ? "eager" : "lazy"}
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes={featured ? "(max-width: 768px) 100vw, 800px" : "(max-width: 768px) 100vw, 400px"}
         />
+        {/* Hover preview: video if available, otherwise previewImage overlay */}
+        {project.previewVideo && (
+          <video
+            // defer loading until hover/focus to save bandwidth
+            src={videoSrc}
+            ref={videoRef}
+            muted
+            playsInline
+            loop
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        )}
+        {!project.previewVideo && project.previewImage && (
+          <Image
+            src={project.previewImage}
+            alt={`${project.title} preview`}
+            fill
+            loading="lazy"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          />
+        )}
         {/* Category badge */}
         <span className="absolute left-4 top-4 rounded-full bg-[var(--color-bg)]/90 px-3 py-1 text-xs font-semibold text-[var(--color-primary)] backdrop-blur-sm">
           {project.category}
@@ -99,16 +126,41 @@ export function ProjectCard({ project, index = 0, featured = false }: ProjectCar
               </a>
             )}
           </div>
+          <div className="flex items-center gap-3">
+            {/* Preview button - opens modal with iframe if liveUrl exists */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpenPreview(true);
+              }}
+              onMouseEnter={() => {
+                // start loading hover video when user hovers the button
+                if (project.previewVideo && !videoSrc) setVideoSrc(project.previewVideo);
+              }}
+              onFocus={() => {
+                if (project.previewVideo && !videoSrc) setVideoSrc(project.previewVideo);
+              }}
+              className="rounded-md bg-[var(--color-border)] px-3 py-1 text-xs text-[var(--color-secondary)] hover:bg-[var(--color-accent)] hover:text-white transition-colors"
+            >
+              Preview
+            </button>
 
-          <Link
-            href={`/projects/${project.slug}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-accent)] hover:gap-2 transition-all"
-          >
-            Details
-            <ArrowRight size={12} />
-          </Link>
+            <Link
+              href={`/projects/${project.slug}`}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--color-accent)] hover:gap-2 transition-all"
+            >
+              Details
+              <ArrowRight size={12} />
+            </Link>
+          </div>
         </div>
       </div>
+      <PreviewModal
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        title={project.title}
+        src={project.liveUrl}
+      />
     </motion.article>
   );
 }

@@ -51,6 +51,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Smooth theme transitions when toggling */
+.theme-transition, .theme-transition * {
+  transition: background-color 260ms ease, color 260ms ease, border-color 260ms ease, box-shadow 260ms ease, fill 260ms ease, stroke 260ms ease;
+}
+
 /* ── Selection ─────────────────────────────────────────────── */
 ::selection {
   background-color: var(--color-accent);

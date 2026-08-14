@@ -8,6 +8,8 @@ export interface Project {
   category: Exclude<ProjectCategory, "All">;
   tech: string[];
   image: string;
+  previewImage?: string; // optional GIF or still used for hover preview
+  previewVideo?: string; // optional short mp4/webm preview
   liveUrl?: string;
   githubUrl?: string;
   featured: boolean;
@@ -59,6 +61,7 @@ export const projects: Project[] = [
     category: "Web",
     tech: ["TypeScript", "Next.js", "Node.js", "PostgreSQL", "Prisma ORM", "Tailwind CSS", "Git"],
     image: "/DAshbord-PDAM.jpeg",
+    previewImage: "/DAshbord-PDAM.jpeg",
     githubUrl: "https://github.com/AbdullohH12Y4M/pdam",
     featured: true,
   },
@@ -71,6 +74,7 @@ export const projects: Project[] = [
     category: "Web",
     tech: ["NestJS", "Next.js", "MongoDB", "Prisma ORM", "TypeScript"],
     image: "/Catalog.jpeg",
+    previewImage: "/Catalog.jpeg",
     githubUrl: "https://github.com/LoushenLung/Tefa-Our-Website-Catalog-",
     featured: true,
   },
@@ -83,6 +87,7 @@ export const projects: Project[] = [
     category: "Mobile",
     tech: ["React Native", "Expo", "TypeScript", "RESTful API", "Git"],
     image: "/Sneaker-ECommerce.jpeg",
+    previewImage: "/Sneaker-ECommerce.jpeg",
     githubUrl: "https://github.com/AbdullohH12Y4M/FE_Sneaker",
     featured: true,
   },

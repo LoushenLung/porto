@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { ArrowDown, Download, MapPin } from "lucide-react";
 import { FaGithub, FaLinkedin, FaWhatsapp } from "react-icons/fa6";
@@ -132,17 +132,47 @@ export function Hero() {
   const firstName = personalInfo.name.split(" ")[0];
   const lastName = personalInfo.name.split(" ").slice(1).join(" ");
 
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  // subtle mouse parallax for desktop to add depth
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (mq && mq.matches) return;
+
+    function handleMove(e: MouseEvent) {
+      const rect = el.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+      const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+      const tx = x * 10; // horizontal parallax px
+      const ty = y * 8; // vertical parallax px
+      el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+    }
+
+    function reset() {
+      if (el) el.style.transform = "";
+    }
+
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseleave", reset);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseleave", reset);
+    };
+  }, []);
+
   return (
     <section
       id="hero"
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 mt-0.7rem"
     >
       {/* ── Background ── */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        {/* Large blurred orb top-left */}
-        <div className="absolute -left-64 -top-64 h-[600px] w-[600px] rounded-full bg-[var(--color-accent)]/8 blur-[120px]" />
-        {/* Smaller orb bottom-right */}
-        <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-[var(--color-accent)]/6 blur-[80px]" />
+        {/* Large blurred orb top-left (animated) */}
+        <div className="absolute -left-64 -top-64 h-[600px] w-[600px] rounded-full bg-[var(--color-accent)]/8 blur-[120px] blob-anim-1" />
+        {/* Smaller orb bottom-right (animated) */}
+        <div className="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-[var(--color-accent)]/6 blur-[80px] blob-anim-2" />
         {/* Dot grid */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -156,10 +186,11 @@ export function Hero() {
 
       {/* ── Content ── */}
       <motion.div
+        ref={contentRef as any}
         variants={container}
         initial="hidden"
         animate="visible"
-        className="relative z-10 mx-auto w-full max-w-3xl text-center"
+        className="relative z-10 mx-auto w-full max-w-3xl text-center will-change-transform"
       >
         {/* Badge */}
         <motion.div variants={item} className="mb-8 flex justify-center">
@@ -279,8 +310,26 @@ export function Hero() {
         </motion.div>
       </motion.button>
 
-      {/* Blink keyframe */}
-      <style>{`@keyframes blink { 50% { opacity: 0 } }`}</style>
+      {/* Blink keyframe + background blob animation + reduced-motion support */}
+      <style>{`
+        @keyframes blink { 50% { opacity: 0 } }
+        @keyframes float-1 {
+          0% { transform: translate3d(0,0,0) scale(1); }
+          50% { transform: translate3d(18px, -12px, 0) scale(1.03); }
+          100% { transform: translate3d(0,0,0) scale(1); }
+        }
+        @keyframes float-2 {
+          0% { transform: translate3d(0,0,0) scale(1); }
+          50% { transform: translate3d(-14px, 10px, 0) scale(0.98); }
+          100% { transform: translate3d(0,0,0) scale(1); }
+        }
+        .blob-anim-1 { animation: float-1 8s ease-in-out infinite; }
+        .blob-anim-2 { animation: float-2 10s ease-in-out infinite; }
+        .will-change-transform { will-change: transform; }
+        @media (prefers-reduced-motion: reduce) {
+          .blob-anim-1, .blob-anim-2 { animation: none !important; }
+        }
+      `}</style>
     </section>
   );
 }

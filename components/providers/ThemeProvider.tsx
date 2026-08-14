@@ -42,6 +42,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, mounted]);
 
   const toggleTheme = () => {
+    // add a short class to enable smooth color transitions
+    const root = document.documentElement;
+    root.classList.add("theme-transition");
+    setTimeout(() => root.classList.remove("theme-transition"), 300);
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
