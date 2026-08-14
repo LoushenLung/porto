@@ -12,7 +12,7 @@ export default function Home() {
     <>
       <Navbar />
       <main>
-        <div className=" mt-0.7rem ">  </div>
+        <div className=" mt-[0.7rem] ">  </div>
         <Hero />
         <About />
         <Skills />
